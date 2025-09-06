@@ -1,22 +1,76 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Home</title>
-</head>
-<body>
-<h1>Home</h1>
-<p>Welcome to the Home Page!</p>
-<p>Total Items: {{ totalItems }}</p>
-<hr>
-<p>Total Sales:</p>
-<ul>
-    {% for sale in totalSales %}
-        <li>{{ sale.total_amount }}</li>
-    {% endfor %}
-</ul>
-<h1>Total Sales: </h1>
-<p>{{ sales }}</p>
+{% extends "homeUI/layout.html" %} 
 
-</body>
-</html>
+{% block content %}
+
+<div class="container mt-3 my-md-4 my-lg-4 my-xl-4 my-xxl-4">
+    <h1>Dashboard Overview</h1>
+</div>
+<div class="container text-center my-2">
+  <div class="row">
+    <div class="col-12 col-md-6 col-lg-3 px-5 px-md-2 px-lg-2 px-xl-3 px-xxl-4 py-3">
+      <div class="card">
+        <div class="card-header text-start">Total Items</div>
+        <div class="card-body">
+          <figure>
+            <blockquote class="blockquote">
+              <p>{{ totalItems }}</p>
+            </blockquote>
+            <figcaption class="blockquote-footer">
+              All products in <cite title="Source Title">Inventory</cite>
+            </figcaption>
+          </figure>
+        </div>
+      </div>
+    </div>
+    <div class="col-12 col-md-6 col-lg-3 px-5 px-md-2 px-lg-2 px-xl-3 px-xxl-4 py-3">
+      <div class="card">
+        <div class="card-header text-start">Number of sales</div>
+        <div class="card-body">
+          <figure>
+            <blockquote class="blockquote">
+              <p>₱ {{ sales }}</p>
+            </blockquote>
+            <figcaption class="blockquote-footer">
+              Transactions processed
+            </figcaption>
+          </figure>
+        </div>
+      </div>
+    </div>
+    <div class="col-12 col-md-6 col-lg-3 px-5 px-md-2 px-lg-2 px-xl-3 px-xxl-4 py-3">
+      <div class="card">
+        <div class="card-header text-start">Hit items</div>
+        <div class="card-body">
+          <figure>
+            <blockquote class="blockquote">
+              <p>{{ hitItems }}</p>
+            </blockquote>
+            <figcaption class="blockquote-footer">
+              Top selling items
+            </figcaption>
+          </figure>
+        </div>
+      </div>
+    </div>
+    <div class="col-12 col-md-6 col-lg-3 px-5 px-md-2 px-lg-2 px-xl-3 px-xxl-4 py-3">
+      <div class="card">
+        <div class="card-header text-start">Number of customers</div>
+        <div class="card-body">
+          <figure>
+            <blockquote class="blockquote">
+              <p>{{ totalCustomers }}</p>
+            </blockquote>
+            <figcaption class="blockquote-footer">
+              Registered <cite title="Source Title">Customers</cite>
+            </figcaption>
+          </figure>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block analytics %}
+
+{% endblock %}
