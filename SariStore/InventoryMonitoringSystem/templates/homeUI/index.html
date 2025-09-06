@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Home</title>
+</head>
+<body>
+<h1>Home</h1>
+<p>Welcome to the Home Page!</p>
+<p>Total Items: {{ totalItems }}</p>
+<hr>
+<p>Total Sales:</p>
+<ul>
+    {% for sale in totalSales %}
+        <li>{{ sale.total_amount }}</li>
+    {% endfor %}
+</ul>
+<h1>Total Sales: </h1>
+<p>{{ sales }}</p>
+
+</body>
+</html>
