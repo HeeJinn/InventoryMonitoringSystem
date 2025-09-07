@@ -1,3 +1,4 @@
+import datetime
 from math import trunc
 
 from django.db import connection
@@ -13,6 +14,7 @@ from django.db.models import Count
 # Create your views here.
 
 def index(request):
+    dateNow = datetime.datetime.today()
     totalItems = Items.objects.count()
     totalSales = Transactions.objects.all()
     totalCustomers = Customer.objects.count()
@@ -43,6 +45,7 @@ def index(request):
         "totalCustomers": totalCustomers,
         "hitItems": hitItems,
         "sales": sales,
+        "dateNow": dateNow
     }
     return render(request, "homeUI/index.html", context)
 
@@ -52,7 +55,7 @@ def costumerPage(request):
         "activePage": "customer",
         "costumers": costumers,
     }
-    return
+    return render(request, "homeUI/customers.html", context)
     
 def itemsPage(request):
     items = Items.objects.all()
@@ -60,7 +63,7 @@ def itemsPage(request):
         "activePage": "items",
         "items": items,
     }
-    return
+    return render(request, "homeUI/items.html", context)
     
 def transacationsPage(request):
     transactions = Transactions.objects.all()
@@ -68,4 +71,4 @@ def transacationsPage(request):
         "activePage": "transactions",
         "transactions": transactions,
     }
-    return
+    return render(request, "homeUI/transactions.html", context)
