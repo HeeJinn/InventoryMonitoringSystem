@@ -37,13 +37,13 @@
           </button>
 
           <div
-            class="offcanvas offcanvas-lg offcanvas-start"
+            class="offcanvas offcanvas-lg offcanvas-start rounded-end-4"
             tabindex="-1"
             id="navbarOffcanvas"
             aria-labelledby="navbarOffcanvasLabel"
             data-bs-theme="dark">
-            <div class="offcanvas-header">
-              <h5 class="offcanvas-title" id="navbarOffcanvasLabel">Menu</h5>
+            <div class="offcanvas-header rounded-end-4">
+              <h5 class="offcanvas-title" id="navbarOffcanvasLabel"><i class="bi bi-shop-window pe-1"></i> Sari-sari store</h5>
                 <hr>
               <button
                 type="button"
@@ -62,21 +62,21 @@
                 </li>
                 <li class="nav-item">
                   <a
-                    class="nav-link {% if active_page == 'customer' %}active{% endif %}"
+                    class="nav-link {% if activePage == 'customer' %}active{% endif %}"
                     href="{% url 'customer' %}"
-                    {% if active_page == 'customer' %}aria-current="page"{% endif %}>Costumers</a>
+                    {% if activePage == 'customer' %}aria-current="page"{% endif %}>Costumers</a>
                 </li>
                 <li class="nav-item">
                   <a
-                    class="nav-link {% if active_page == 'items' %}active{% endif %}"
+                    class="nav-link {% if activePage == 'items' %}active{% endif %}"
                     href="{% url 'items' %}"
-                    {% if active_page == 'items' %}aria-current="page"{% endif %}>Items</a>
+                    {% if activePage == 'items' %}aria-current="page"{% endif %}>Items</a>
                 </li>
                 <li class="nav-item">
                   <a
-                    class="nav-link {% if active_page == 'transactions' %}active{% endif %}"
+                    class="nav-link {% if activePage == 'transactions' %}active{% endif %}"
                     href="{% url 'transactions' %}"
-                    {% if active_page == 'transactions' %}aria-current="page"{% endif %}>Transactions</a>
+                    {% if activePage == 'transactions' %}aria-current="page"{% endif %}>Transactions</a>
                 </li>
               </ul>
             </div>
@@ -93,7 +93,7 @@
 
   <footer class="mt-auto">
       <div class="container-fluid text-center bg-dark text-light py-4">
-          <p>Footer</p>
+          <p>@copyright Developed by Kenley Russel Benitez</p>
       </div>
   </footer>
     

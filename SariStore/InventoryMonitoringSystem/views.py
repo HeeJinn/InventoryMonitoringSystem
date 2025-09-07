@@ -3,13 +3,11 @@ from math import trunc
 
 from django.db import connection
 from django.http import HttpResponse
-from django.shortcuts import render
 
 from InventoryMonitoringSystem.models import *
-import json
 from django.shortcuts import render
 from .models import Items, Transactions
-from django.db.models import Count
+from django.db.models import Q
 
 # Create your views here.
 
@@ -18,7 +16,7 @@ def index(request):
     totalItems = Items.objects.count()
     totalSales = Transactions.objects.all()
     totalCustomers = Customer.objects.count()
-    # --- NEW: Get Hit Items using Raw SQL ---
+
     sql_query = """
         SELECT i.item_name, COUNT(t.item_id) AS sales_count FROM transactions t JOIN items i ON t.item_id = i.item_id
         GROUP BY i.item_name
@@ -49,26 +47,57 @@ def index(request):
     }
     return render(request, "homeUI/index.html", context)
 
-def costumerPage(request):
-    costumers = Customer.objects.all()
+def customerPage(request):
+    customers = None
+    search = request.GET.get("search")
+    if search:
+        customers = Customer.objects.filter(Q(first_name__icontains=search) | Q(last_name__icontains=search))
+    else:
+        customers = Customer.objects.all()
+
     context = {
         "activePage": "customer",
-        "costumers": costumers,
+        "customers": customers,
+        "search": search
     }
     return render(request, "homeUI/customers.html", context)
     
 def itemsPage(request):
-    items = Items.objects.all()
+    searchFields = ["item_name__icontains", "category__icontains"]
+    searchQuery = request.GET.get("search")
+    items = searchModels(Items, searchQuery, searchFields)
     context = {
         "activePage": "items",
         "items": items,
+        "search": searchQuery
     }
     return render(request, "homeUI/items.html", context)
     
 def transacationsPage(request):
-    transactions = Transactions.objects.all()
+    searchQuery = request.GET.get('search')
+
+    if searchQuery:
+        transactions = Transactions.objects.filter(
+            Q(customer__first_name__icontains=searchQuery) |
+            Q(customer__last_name__icontains=searchQuery) |
+            Q(customer__contact_number__icontains=searchQuery) |
+            Q(item__item_name__icontains=searchQuery)
+        )
+    else:
+        transactions = Transactions.objects.all()
+
     context = {
         "activePage": "transactions",
         "transactions": transactions,
+        "search": searchQuery
     }
     return render(request, "homeUI/transactions.html", context)
+
+
+def searchModels(model, query, searchFields):
+    if not query:
+        return model.objects.all()
+    q_objects = Q()
+    for field in searchFields:
+        q_objects |= Q(**{field: query})
+    return model.objects.filter(q_objects)

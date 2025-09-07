@@ -1,5 +1,61 @@
 {% extends "homeUI/layout.html" %}
 
 {% block content %}
-<h1>Transactions page</h1>
+<div class="container mt-3 mx-5 my-md-4 my-lg-4 my-xl-4 my-xxl-4">
+    <h1>Transaction Overview</h1>
+</div>
+<div class="container my-2">
+    <div class="row">
+        <div class="col">
+            <form class="d-flex" role="search" method="GET" action="{% url 'transactions' %}">
+            <input class="form-control me-2" type="search" name="search" placeholder="Search transactions" aria-label="Search" value="{% if search == "" or search == None%}{% else %}{{ search }}{% endif %}"/>
+            <button class="btn btn-outline-primary" type="submit"><i class="bi bi-search"></i></button>
+            </form>
+        </div>
+        <div class="col-12 my-4">
+            <div class="card shadow rounded-3 border-1 px-2 py-2">
+                <div class="table-responsive">
+                    <table class="table table-hover table-striped">
+                    <caption>List of customers</caption>
+                  <thead>
+                    <tr>
+                      <th scope="col">id</th>
+                      <th scope="col">Customer</th>
+                      <th scope="col">Item</th>
+                      <th scope="col">Quantity</th>
+                      <th scope="col">Transact date</th>
+                      <th scope="col">Date</th>
+                    </tr>
+                  </thead>
+                  {% for transact in transactions %}
+                      <tr>
+                          <th scope="row">{{ transact.transaction_id }}</th>
+                          <td>{{ transact.customer_id }}</td>
+                          <td>{{ transact.item_id }}</td>
+                          <td>{{ transact.quantity }}</td>
+                          <td>{{ transact.transaction_date }}</td>
+                          <td>{{ transact.date_added }}</td>
+                        </tr>
+
+                    {% endfor %}
+                </table>
+
+                </div>
+            </div>
+        </div>
+        <div class="col-12">
+            <nav aria-label="...">
+              <ul class="pagination justify-content-center">
+                <li class="page-item"><a href="#" class="page-link">Previous</a></li>
+                <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                <li class="page-item "><a class="page-link" href="#" aria-current="page">2</a></li>
+                <li class="page-item"><a class="page-link" href="#">3</a></li>
+                <li class="page-item"><a class="page-link" href="#">Next</a></li>
+              </ul>
+            </nav>
+        </div>
+    </div>
+
+
+</div>
 {% endblock %}
