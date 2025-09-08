@@ -1,0 +1,89 @@
+/* /static/css/custom_styles.css */
+
+/* 1. Define your custom colors as CSS variables */
+:root {
+  --custom-teal: #4bc0c0;
+  --custom-pink: #ff6384;
+  --custom-yellow: #ffce56;
+  --custom-blue: #36a2eb;
+  --dark-grey: #343a40;
+  --light-grey: #f8f9fa;
+}
+
+/* 2. General UI Improvements */
+body {
+  background-color: var(--light-grey);
+}
+
+
+/* 3. Typography Improvements */
+.dashboard-title {
+  color: var(--dark-grey);
+  font-weight: 600;
+  border-bottom: 3px solid var(--custom-teal);
+  padding-bottom: 0.5rem;
+  display: inline-block;
+}
+.text-custom-dark-grey {
+    color: var(--dark-grey);
+}
+
+/* 4. Navbar Improvements */
+.navbar-custom {
+    background-color: #ffffff;
+    border-bottom: 1px solid #dee2e6;
+    box-shadow: 0 0.125rem 0.25rem rgba(0,0,0,.075) !important;
+}
+
+.navbar-custom .navbar-brand,
+.navbar-custom .nav-link {
+    color: var(--dark-grey);
+}
+
+.navbar-custom .nav-link.active,
+.navbar-custom .nav-link:hover {
+    color: var(--custom-teal);
+}
+
+
+/* 5. Create Bootstrap-style helper classes for backgrounds */
+.bg-custom-teal {
+  background-color: var(--custom-teal) !important;
+}
+.bg-custom-pink {
+  background-color: var(--custom-pink) !important;
+}
+.bg-custom-yellow {
+    background-color: var(--custom-yellow) !important;
+}
+.bg-custom-blue {
+    background-color: var(--custom-blue) !important;
+}
+
+/* 6. Create helper classes for text colors */
+.text-custom-teal {
+  color: var(--custom-teal) !important;
+}
+.text-custom-pink {
+  color: var(--custom-pink) !important;
+}
+
+
+/* 7. Style components like buttons */
+.btn-custom-teal {
+  color: #fff;
+  background-color: var(--custom-teal);
+  border-color: var(--custom-teal);
+}
+
+.btn-custom-teal:hover {
+  color: #fff;
+  background-color: #3aa8a8; /* A slightly darker teal for hover */
+  border-color: #3aa8a8;
+}
+
+/* You can even override default Bootstrap classes if you want */
+.card-header {
+    font-weight: 500;
+}
+

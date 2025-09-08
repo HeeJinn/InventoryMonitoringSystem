@@ -1,13 +1,16 @@
 import datetime
 from math import trunc
+import json
 
 from django.db import connection
+from django.db.models.functions import TruncMonth
 from django.http import HttpResponse
 
 from InventoryMonitoringSystem.models import *
 from django.shortcuts import render
 from .models import Items, Transactions
-from django.db.models import Q
+from django.db.models import Q, Count, Sum
+
 
 # Create your views here.
 
@@ -16,26 +19,42 @@ def index(request):
     totalItems = Items.objects.count()
     totalSales = Transactions.objects.all()
     totalCustomers = Customer.objects.count()
-
-    sql_query = """
-        SELECT i.item_name, COUNT(t.item_id) AS sales_count FROM transactions t JOIN items i ON t.item_id = i.item_id
-        GROUP BY i.item_name
-        ORDER BY sales_count DESC LIMIT 5;
-    """
-
-    with connection.cursor() as cursor:
-        cursor.execute(sql_query)
-        top_selling_items = cursor.fetchall()
-
-    hitItems = len(top_selling_items)  # The number of top items (e.g., 5)
-    # --- END of new logic ---
-    # top_selling_items = Transactions.objects.values('item__item_name').annotate(
-    #     sales_count=Count('item__item_name')
-    # ).order_by('-sales_count')[:5]
-    # hitItems = len(top_selling_items)
+    top_selling_items = Transactions.objects.values('item__item_name').annotate(
+        sales_count=Count('item__item_name')).order_by('-sales_count')[:5]
+    hitItems = len(top_selling_items)
     sales = 0
     for sale in totalSales:
         sales += sale.total_amount
+
+    # --- ADD THIS: Data queries for your charts ---
+    # Chart 1: Bar Chart (Monthly Sales)
+    sales_per_month = Transactions.objects.annotate(
+        month=TruncMonth('transaction_date')
+    ).values('month').annotate(
+        total=Sum('total_amount')
+    ).order_by('month')
+
+    sales_labels = [s['month'].strftime('%B') for s in sales_per_month]
+    sales_data = [float(s['total']) for s in sales_per_month]
+
+    # Chart 2: Doughnut Chart (Sales by Category)
+    sales_by_category = Items.objects.values('category').annotate(
+        total_sold=Sum('transactions__quantity')
+    ).order_by('-total_sold')
+
+    category_labels = [c['category'] for c in sales_by_category if c['category']]  # Added check for null category
+    category_data = [int(c['total_sold']) for c in sales_by_category if c['category']]
+
+    # Chart 3: Line Chart (New Customers per Month)
+    customers_per_month = Customer.objects.annotate(
+        month=TruncMonth('created_at')
+    ).values('month').annotate(
+        count=Count('customer_id')
+    ).order_by('month')
+
+    customer_labels = [c['month'].strftime('%B') for c in customers_per_month]
+    customer_data = [c['count'] for c in customers_per_month]
+    # --- End of new code section ---
 
     context = {
         "activePage": "dashboard",
@@ -43,7 +62,15 @@ def index(request):
         "totalCustomers": totalCustomers,
         "hitItems": hitItems,
         "sales": sales,
-        "dateNow": dateNow
+        "dateNow": dateNow,
+
+        # ADD THESE LINES to your context dictionary
+        'sales_labels': json.dumps(sales_labels),
+        'sales_data': json.dumps(sales_data),
+        'category_labels': json.dumps(category_labels),
+        'category_data': json.dumps(category_data),
+        'customer_labels': json.dumps(customer_labels),
+        'customer_data': json.dumps(customer_data),
     }
     return render(request, "homeUI/index.html", context)
 

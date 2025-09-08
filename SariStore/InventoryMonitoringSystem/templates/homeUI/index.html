@@ -3,14 +3,14 @@
 {% block content %}
 
 <div class="container mt-3 mx-5 my-md-4 my-lg-4 my-xl-4 my-xxl-4">
-    <h1>Dashboard Overview</h1>
+    <h1 class="text-custom-dark-grey">Dashboard Overview</h1>
     <p>{{ dateNow }}</p>
 </div>
-<div class="container text-center my-2">
+<div class="container text-center mb-3">
   <div class="row">
     <div class="col-12 col-md-6 col-lg-3 px-5 px-md-2 px-lg-2 px-xl-3 px-xxl-4 py-3">
       <div class="card shadow rounded-4">
-        <div class="card-header text-start bg-primary text-light rounded-top-4 border-0"><i class="bi bi-diagram-3-fill"></i> Total Items</div>
+        <div class="card-header text-start bg-custom-teal text-light rounded-top-4 border-0"><i class="bi bi-diagram-3-fill"></i> Total Items</div>
         <div class="card-body">
           <figure>
             <blockquote class="blockquote">
@@ -25,7 +25,7 @@
     </div>
     <div class="col-12 col-md-6 col-lg-3 px-5 px-md-2 px-lg-2 px-xl-3 px-xxl-4 py-3">
       <div class="card shadow rounded-4">
-        <div class="card-header text-start bg-success text-light rounded-top-4 border-0"><i class="bi bi-cash-coin"></i> Number of sales</div>
+        <div class="card-header text-start bg-custom-pink text-light rounded-top-4 border-0"><i class="bi bi-cash-coin"></i> Number of sales</div>
         <div class="card-body">
           <figure>
             <blockquote class="blockquote">
@@ -40,7 +40,7 @@
     </div>
     <div class="col-12 col-md-6 col-lg-3 px-5 px-md-2 px-lg-2 px-xl-3 px-xxl-4 py-3">
       <div class="card shadow rounded-4">
-        <div class="card-header text-start bg-danger text-light rounded-top-4 border-0"><i class="bi bi-star-fill"></i> Hit items</div>
+        <div class="card-header text-start bg-custom-yellow text-light rounded-top-4 border-0"><i class="bi bi-star-fill"></i> Hit items</div>
         <div class="card-body">
           <figure>
             <blockquote class="blockquote">
@@ -55,7 +55,7 @@
     </div>
     <div class="col-12 col-md-6 col-lg-3 px-5 px-md-2 px-lg-2 px-xl-3 px-xxl-4 py-3">
       <div class="card shadow rounded-4">
-        <div class="card-header text-start bg-warning text-light rounded-top-4 border-0"><i class="bi bi-person-fill-up"></i> Number of customers</div>
+        <div class="card-header text-start bg-custom-blue text-light rounded-top-4 border-0"><i class="bi bi-person-fill-up"></i> Number of customers</div>
         <div class="card-body">
           <figure>
             <blockquote class="blockquote">
@@ -70,9 +70,131 @@
     </div>
   </div>
 </div>
-<hr class="mx-5 my-5">
+
 {% endblock %}
 
 {% block analytics %}
+<div class="container my-4">
+    <div class="row g-4">
+        <div class="col-12 col-lg-8">
+            <div class="card shadow rounded-4 h-100 px-2 py-2">
+                <div class="card-header bg-white border-0 pt-3">
+                    <h5 class="mb-0">Sales Overview</h5>
+                </div>
+                <div class="card-body p-3">
+                    <canvas id="firstChart"></canvas>
+                </div>
+            </div>
+        </div>
 
+        <div class="col-12 col-lg-4">
+            <div class="card shadow rounded-4 h-100 px-2 py-2">
+                <div class="card-header bg-white border-0 pt-3">
+                    <h5 class="mb-0">Category Breakdown</h5>
+                </div>
+                <div class="card-body p-3 d-flex align-items-center">
+                    <canvas id="secondChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12">
+            <div class="card shadow rounded-4 px-2 py-2">
+                <div class="card-header bg-white border-0 pt-3">
+                    <h5 class="mb-0">Monthly Trends</h5>
+                </div>
+                <div class="card-body p-3">
+                    <canvas id="thirdChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  // Bar Chart
+  const ctx = document.getElementById('firstChart').getContext('2d');
+  new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: {{ sales_labels|safe }},
+      datasets: [{
+        label: 'Sales',
+        data: {{ sales_data|safe }},
+        borderWidth: 1,
+        backgroundColor: 'rgba(54, 162, 235, 0.6)',
+        borderColor: 'rgba(54, 162, 235, 1)'
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {
+        y: { beginAtZero: true }
+      },
+      plugins: {
+        legend: {
+          display: false
+        }
+      }
+    }
+  });
+
+  // Doughnut Chart
+  const ctx2 = document.getElementById('secondChart').getContext('2d');
+  new Chart(ctx2, {
+    type: 'doughnut',
+    data: {
+      labels: {{ category_labels|safe }},
+      datasets: [{
+        label: 'Categories',
+        data: {{ category_data|safe }},
+        borderWidth: 1,
+        backgroundColor: [
+          'rgba(255, 99, 132, 0.7)',
+          'rgba(255, 206, 86, 0.7)',
+          'rgba(75, 192, 192, 0.7)'
+        ]
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          position: 'top',
+        }
+      }
+    }
+  });
+
+  // Line Chart
+  const ctx3 = document.getElementById('thirdChart').getContext('2d');
+  new Chart(ctx3, {
+    type: 'line',
+    data: {
+      labels: {{ customer_labels|safe }},
+      datasets: [{
+        label: 'Profit',
+        data: {{ customer_data|safe }},
+        fill: false,
+        borderColor: 'rgba(75, 192, 192, 1)',
+        tension: 0.1
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {
+        y: { beginAtZero: true }
+      },
+      plugins: {
+        legend: {
+          display: false
+        }
+      }
+    }
+  });
+</script>
 {% endblock %}

@@ -1,8 +1,10 @@
+{% load static%}
 <!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <title>Sari-sari store</title>
+      <link rel="stylesheet" href="{% static 'css/custom_style.css' %}">
     <link
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css" />
@@ -19,7 +21,7 @@
   </head>
   <body class="d-flex flex-column min-vh-100">
     <header>
-      <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+      <nav class="navbar navbar-expand-lg navbar-dark bg-custom-teal">
         <div class="container-fluid">
           <a class="navbar-brand mx-5 m" href="{% url 'dashboard' %}">
             <i class="bi bi-shop-window pe-1"></i>
@@ -37,11 +39,10 @@
           </button>
 
           <div
-            class="offcanvas offcanvas-lg offcanvas-start rounded-end-4"
+            class="offcanvas offcanvas-lg offcanvas-start rounded-end-4 bg-custom-pink text-light"
             tabindex="-1"
             id="navbarOffcanvas"
-            aria-labelledby="navbarOffcanvasLabel"
-            data-bs-theme="dark">
+            aria-labelledby="navbarOffcanvasLabel">
             <div class="offcanvas-header rounded-end-4">
               <h5 class="offcanvas-title" id="navbarOffcanvasLabel"><i class="bi bi-shop-window pe-1"></i> Sari-sari store</h5>
                 <hr>
@@ -49,6 +50,7 @@
                 type="button"
                 class="btn-close"
                 data-bs-dismiss="offcanvas"
+                data-bs-theme="dark"
                 aria-label="Close"></button>
             </div>
 
@@ -85,17 +87,17 @@
       </nav>
     </header>
 
-    {% block content %} 
+    {% block content %}
     {% endblock %}
 
     {% block analytics%}
     {% endblock%}
 
   <footer class="mt-auto">
-      <div class="container-fluid text-center bg-dark text-light py-4">
+      <div class="container-fluid text-center bg-custom-pink text-light py-4">
           <p>@copyright Developed by Kenley Russel Benitez</p>
       </div>
   </footer>
-    
+
   </body>
 </html>
