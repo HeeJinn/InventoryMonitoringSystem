@@ -2,8 +2,9 @@ import datetime
 from math import trunc
 import json
 
+from django.core.paginator import Paginator
 from django.db import connection
-from django.db.models.functions import TruncMonth
+from django.db.models.functions import TruncMonth, TruncDay
 from django.http import HttpResponse
 
 from InventoryMonitoringSystem.models import *
@@ -26,16 +27,15 @@ def index(request):
     for sale in totalSales:
         sales += sale.total_amount
 
-    # --- ADD THIS: Data queries for your charts ---
     # Chart 1: Bar Chart (Monthly Sales)
-    sales_per_month = Transactions.objects.annotate(
-        month=TruncMonth('transaction_date')
-    ).values('month').annotate(
+    sales_per_day = Transactions.objects.annotate(
+        day=TruncDay('date_added')
+    ).values('day').annotate(
         total=Sum('total_amount')
-    ).order_by('month')
+    ).order_by('day')
 
-    sales_labels = [s['month'].strftime('%B') for s in sales_per_month]
-    sales_data = [float(s['total']) for s in sales_per_month]
+    sales_labels = [s['day'].strftime('%b %d') for s in sales_per_day]
+    sales_data = [float(s['total']) for s in sales_per_day]
 
     # Chart 2: Doughnut Chart (Sales by Category)
     sales_by_category = Items.objects.values('category').annotate(
@@ -45,16 +45,20 @@ def index(request):
     category_labels = [c['category'] for c in sales_by_category if c['category']]  # Added check for null category
     category_data = [int(c['total_sold']) for c in sales_by_category if c['category']]
 
-    # Chart 3: Line Chart (New Customers per Month)
-    customers_per_month = Customer.objects.annotate(
-        month=TruncMonth('created_at')
-    ).values('month').annotate(
-        count=Count('customer_id')
-    ).order_by('month')
+    # Chart 3: Line Chart (Cumulative Sales Growth)
+    daily_sales = Transactions.objects.annotate(
+        day=TruncDay('date_added')
+    ).values('day').annotate(
+        daily_total=Sum('total_amount')
+    ).order_by('day')
 
-    customer_labels = [c['month'].strftime('%B') for c in customers_per_month]
-    customer_data = [c['count'] for c in customers_per_month]
-    # --- End of new code section ---
+    cumulative_sales_labels = []
+    cumulative_sales_data = []
+    running_total = 0
+    for sale in daily_sales:
+        running_total += sale['daily_total']
+        cumulative_sales_labels.append(sale['day'].strftime('%b %d'))
+        cumulative_sales_data.append(float(running_total))
 
     context = {
         "activePage": "dashboard",
@@ -64,28 +68,29 @@ def index(request):
         "sales": sales,
         "dateNow": dateNow,
 
-        # ADD THESE LINES to your context dictionary
         'sales_labels': json.dumps(sales_labels),
         'sales_data': json.dumps(sales_data),
         'category_labels': json.dumps(category_labels),
         'category_data': json.dumps(category_data),
-        'customer_labels': json.dumps(customer_labels),
-        'customer_data': json.dumps(customer_data),
+        'cumulative_sales_labels': json.dumps(cumulative_sales_labels),
+        'cumulative_sales_data': json.dumps(cumulative_sales_data),
     }
     return render(request, "homeUI/index.html", context)
 
 def customerPage(request):
-    customers = None
+    customers = Customer.objects.all()
+    paginator = Paginator(customers, 10)
+    pageNumber = request.GET.get('page')
+    pageObj = paginator.get_page(pageNumber)
     search = request.GET.get("search")
     if search:
-        customers = Customer.objects.filter(Q(first_name__icontains=search) | Q(last_name__icontains=search))
-    else:
-        customers = Customer.objects.all()
+        pageObj = Customer.objects.filter(Q(first_name__icontains=search) | Q(last_name__icontains=search))
 
     context = {
         "activePage": "customer",
         "customers": customers,
-        "search": search
+        "search": search,
+        "pageObj": pageObj
     }
     return render(request, "homeUI/customers.html", context)
     

@@ -72,18 +72,35 @@ body {
 /* 7. Style components like buttons */
 .btn-custom-teal {
   color: #fff;
-  background-color: var(--custom-teal);
-  border-color: var(--custom-teal);
+  border-radius: 20px !important; /* This makes the button rounder and overrides other styles */
+  background-color: var(--custom-teal) !important; /* Force override */
+  border-color: var(--custom-teal) !important; /* Force override */
+  padding: 0.5rem 1.25rem; /* Added some padding for better look */
+  font-weight: 500;
 }
 
 .btn-custom-teal:hover {
   color: #fff;
-  background-color: #3aa8a8; /* A slightly darker teal for hover */
-  border-color: #3aa8a8;
+  background-color: #3aa8a8 !important; /* A slightly darker teal for hover */
+  border-color: #3aa8a8 !important;
 }
+/* Outline Button */
+.btn-outline-custom-teal {
+  color: var(--custom-teal) !important;
+  border-color: var(--custom-teal) !important;
+  border-radius: 20px !important;
+  padding: 0.5rem 1.25rem;
+  font-weight: 500;
+  background-color: transparent !important; /* Ensure it starts with no background */
+}
+
+.btn-outline-custom-teal:hover {
+  color: #fff !important;
+  background-color: var(--custom-teal) !important;
+  border-color: var(--custom-teal) !important;
 
 /* You can even override default Bootstrap classes if you want */
 .card-header {
     font-weight: 500;
-}
+}}
 
