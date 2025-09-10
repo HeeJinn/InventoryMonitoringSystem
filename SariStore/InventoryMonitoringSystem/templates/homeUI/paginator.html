@@ -1,0 +1,22 @@
+<nav aria-label="...">
+              <ul class="pagination justify-content-center">
+                {% if pageObj.has_previous %}
+                    <li class="page-item"><a href="?page={{ pageObj.previous_page_number }}" class="page-link">Previous</a></li>
+                {% else %}
+                    <li class="page-item disabled"><a href="#" class="page-link">Previous</a></li>
+                {% endif %}
+                {% for num in pageObj.paginator.page_range %}
+                    {% if pageObj.number == num %}
+                        <li class="page-item active"><a class="page-link" href="#">{{ num }}</a></li>
+                    {% else %}
+                        <li class="page-item"><a class="page-link" href="?page={{ num }}">{{ num }}</a></li>
+                    {% endif %}
+                {% endfor %}
+                {% if pageObj.has_next %}
+                    <li class="page-item"><a class="page-link" href="?page={{ pageObj.next_page_number }}">Next</a></li>
+                {% else %}
+                    <li class="page-item disabled"><a class="page-link" href="#">Next</a></li>
+                {% endif %}
+
+              </ul>
+            </nav>

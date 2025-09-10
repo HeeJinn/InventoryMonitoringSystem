@@ -16,7 +16,7 @@
             <div class="card shadow rounded-3 border-1 px-2 py-2">
                 <div class="table-responsive">
                     <table class="table table-hover table-striped">
-                    <caption>List of customers</caption>
+                    <caption>List of transactions</caption>
                   <thead>
                     <tr>
                       <th scope="col">id</th>
@@ -27,7 +27,7 @@
                       <th scope="col">Date</th>
                     </tr>
                   </thead>
-                  {% for transact in transactions %}
+                  {% for transact in pageObj %}
                       <tr>
                           <th scope="row">{{ transact.transaction_id }}</th>
                           <td>{{ transact.customer_id }}</td>
@@ -44,15 +44,7 @@
             </div>
         </div>
         <div class="col-12">
-            <nav aria-label="...">
-              <ul class="pagination justify-content-center">
-                <li class="page-item"><a href="#" class="page-link">Previous</a></li>
-                <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                <li class="page-item "><a class="page-link" href="#" aria-current="page">2</a></li>
-                <li class="page-item"><a class="page-link" href="#">3</a></li>
-                <li class="page-item"><a class="page-link" href="#">Next</a></li>
-              </ul>
-            </nav>
+            {% include "homeUI/paginator.html"%}
         </div>
     </div>
 

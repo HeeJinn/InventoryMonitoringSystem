@@ -1,3 +1,4 @@
+import dataclasses
 import datetime
 from math import trunc
 import json
@@ -79,17 +80,16 @@ def index(request):
 
 def customerPage(request):
     customers = Customer.objects.all()
+    searchQuery = request.GET.get("search")
+    if searchQuery:
+        customers = Customer.objects.filter(Q(first_name__icontains=searchQuery) | Q(last_name__icontains=searchQuery))
     paginator = Paginator(customers, 10)
     pageNumber = request.GET.get('page')
     pageObj = paginator.get_page(pageNumber)
-    search = request.GET.get("search")
-    if search:
-        pageObj = Customer.objects.filter(Q(first_name__icontains=search) | Q(last_name__icontains=search))
-
     context = {
         "activePage": "customer",
         "customers": customers,
-        "search": search,
+        "search": searchQuery,
         "pageObj": pageObj
     }
     return render(request, "homeUI/customers.html", context)
@@ -98,16 +98,19 @@ def itemsPage(request):
     searchFields = ["item_name__icontains", "category__icontains"]
     searchQuery = request.GET.get("search")
     items = searchModels(Items, searchQuery, searchFields)
+    paginator = Paginator(items, 10)
+    pageNumber = request.GET.get('page')
+    pageObj = paginator.get_page(pageNumber)
     context = {
         "activePage": "items",
-        "items": items,
+        "pageObj": pageObj,
         "search": searchQuery
     }
     return render(request, "homeUI/items.html", context)
     
 def transacationsPage(request):
     searchQuery = request.GET.get('search')
-
+    transactions = Transactions.objects.all()
     if searchQuery:
         transactions = Transactions.objects.filter(
             Q(customer__first_name__icontains=searchQuery) |
@@ -115,12 +118,13 @@ def transacationsPage(request):
             Q(customer__contact_number__icontains=searchQuery) |
             Q(item__item_name__icontains=searchQuery)
         )
-    else:
-        transactions = Transactions.objects.all()
+    paginator = Paginator(transactions, 10)
+    pageNumber = request.GET.get('page')
+    pageObj = paginator.get_page(pageNumber)
 
     context = {
         "activePage": "transactions",
-        "transactions": transactions,
+        "pageObj": pageObj,
         "search": searchQuery
     }
     return render(request, "homeUI/transactions.html", context)
