@@ -28,14 +28,17 @@
                     </tr>
                   </thead>
                   {% for transact in pageObj %}
-                      <tr>
-                          <th scope="row">{{ transact.transaction_id }}</th>
-                          <td>{{ transact.customer_id }}</td>
-                          <td>{{ transact.item_id }}</td>
-                          <td>{{ transact.quantity }}</td>
-                          <td>{{ transact.transaction_date }}</td>
-                          <td>{{ transact.date_added }}</td>
-                        </tr>
+                    <tr>
+                      <th scope="row">{{ transact.transaction_id }}</th>
+
+                      <td>{{ transact.customer.first_name }} {{ transact.customer.last_name }}</td>
+
+                      <td>{{ transact.item.item_name }}</td>
+
+                      <td>{{ transact.quantity }}</td>
+                      <td>{{ transact.transaction_date|date:"M. d, Y" }}</td>
+                      <td>{{ transact.date_added|date:"M. d, Y" }}</td>
+                    </tr>
 
                     {% endfor %}
                 </table>

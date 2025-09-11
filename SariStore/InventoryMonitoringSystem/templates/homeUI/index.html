@@ -109,7 +109,7 @@
         <div class="col-12">
             <div class="card shadow rounded-4 px-2 py-2">
                 <div class="card-header bg-white border-0 pt-3">
-                    <h5 class="mb-0">Cumulative Sales</h5>
+                    <h5 class="mb-0">Weekly Sales Trend</h5>
                 </div>
                 <div class="card-body p-3">
                     <canvas id="thirdChart"></canvas>
@@ -163,7 +163,7 @@
           'rgba(255, 99, 132, 0.7)',
           'rgba(255, 206, 86, 0.7)',
           'rgba(75, 192, 192, 0.7)',
-          'rgba(153, 102, 255, 0.7)', // Added purple
+          'rgba(153, 102, 255, 0.7)',
           'rgba(255, 159, 64, 0.7)'
         ]
       }]
@@ -179,18 +179,19 @@
     }
   });
 
-  // Line Chart
+  // Line Chart (Updated for Weekly Data)
   const ctx3 = document.getElementById('thirdChart').getContext('2d');
   new Chart(ctx3, {
     type: 'line',
     data: {
-      labels: {{ cumulative_sales_labels|safe }},
+      labels: {{ weekly_sales_labels|safe }},
       datasets: [{
-        label: 'Profit',
-        data: {{ cumulative_sales_data|safe }},
-        fill: false,
+        label: 'Total Weekly Sales',
+        data: {{ weekly_sales_data|safe }},
+        fill: true,
+        backgroundColor: 'rgba(75, 192, 192, 0.2)',
         borderColor: 'rgba(75, 192, 192, 1)',
-        tension: 0.1
+        tension: 0.2
       }]
     },
     options: {

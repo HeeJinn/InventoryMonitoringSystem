@@ -5,7 +5,7 @@ import json
 
 from django.core.paginator import Paginator
 from django.db import connection
-from django.db.models.functions import TruncMonth, TruncDay
+from django.db.models.functions import TruncMonth, TruncDay, TruncWeek
 from django.http import HttpResponse
 
 from InventoryMonitoringSystem.models import *
@@ -43,23 +43,19 @@ def index(request):
         total_sold=Sum('transactions__quantity')
     ).order_by('-total_sold')
 
-    category_labels = [c['category'] for c in sales_by_category if c['category']]  # Added check for null category
+    category_labels = [c['category'] for c in sales_by_category if c['category']]
     category_data = [int(c['total_sold']) for c in sales_by_category if c['category']]
 
-    # Chart 3: Line Chart (Cumulative Sales Growth)
-    daily_sales = Transactions.objects.annotate(
-        day=TruncDay('date_added')
-    ).values('day').annotate(
-        daily_total=Sum('total_amount')
-    ).order_by('day')
+    # CHART 3: LINE CHART (Weekly Sales Trend)
 
-    cumulative_sales_labels = []
-    cumulative_sales_data = []
-    running_total = 0
-    for sale in daily_sales:
-        running_total += sale['daily_total']
-        cumulative_sales_labels.append(sale['day'].strftime('%b %d'))
-        cumulative_sales_data.append(float(running_total))
+    weekly_sales = Transactions.objects.annotate(
+        week=TruncWeek('date_added')
+    ).values('week').annotate(
+        weekly_total=Sum('total_amount')
+    ).order_by('week')
+
+    weekly_sales_labels = [sale['week'].strftime('Week of %b %d') for sale in weekly_sales]
+    weekly_sales_data = [float(sale['weekly_total']) for sale in weekly_sales]
 
     context = {
         "activePage": "dashboard",
@@ -73,8 +69,8 @@ def index(request):
         'sales_data': json.dumps(sales_data),
         'category_labels': json.dumps(category_labels),
         'category_data': json.dumps(category_data),
-        'cumulative_sales_labels': json.dumps(cumulative_sales_labels),
-        'cumulative_sales_data': json.dumps(cumulative_sales_data),
+        'weekly_sales_labels': json.dumps(weekly_sales_labels),
+        'weekly_sales_data': json.dumps(weekly_sales_data),
     }
     return render(request, "homeUI/index.html", context)
 
@@ -107,18 +103,24 @@ def itemsPage(request):
         "search": searchQuery
     }
     return render(request, "homeUI/items.html", context)
-    
+
+
 def transacationsPage(request):
     searchQuery = request.GET.get('search')
-    transactions = Transactions.objects.all()
+
+    # Start with the base queryset including the JOIN
+    transactions_list = Transactions.objects.select_related('customer', 'item')
+
     if searchQuery:
-        transactions = Transactions.objects.filter(
+        # Apply filters to the base queryset
+        transactions_list = transactions_list.filter(
             Q(customer__first_name__icontains=searchQuery) |
             Q(customer__last_name__icontains=searchQuery) |
             Q(customer__contact_number__icontains=searchQuery) |
             Q(item__item_name__icontains=searchQuery)
         )
-    paginator = Paginator(transactions, 10)
+
+    paginator = Paginator(transactions_list, 10)
     pageNumber = request.GET.get('page')
     pageObj = paginator.get_page(pageNumber)
 
