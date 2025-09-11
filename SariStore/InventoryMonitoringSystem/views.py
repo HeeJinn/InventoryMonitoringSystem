@@ -1,11 +1,11 @@
-import dataclasses
+
 import datetime
 from math import trunc
 import json
 
 from django.core.paginator import Paginator
 from django.db import connection
-from django.db.models.functions import TruncMonth, TruncDay, TruncWeek
+from django.db.models.functions import  TruncDay, TruncWeek
 from django.http import HttpResponse
 
 from InventoryMonitoringSystem.models import *
@@ -108,11 +108,9 @@ def itemsPage(request):
 def transacationsPage(request):
     searchQuery = request.GET.get('search')
 
-    # Start with the base queryset including the JOIN
     transactions_list = Transactions.objects.select_related('customer', 'item')
 
     if searchQuery:
-        # Apply filters to the base queryset
         transactions_list = transactions_list.filter(
             Q(customer__first_name__icontains=searchQuery) |
             Q(customer__last_name__icontains=searchQuery) |
